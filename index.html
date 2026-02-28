@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jaydon's Dashboard ⚡</title>
-    <meta name="description" content="Quick access to everything you need">
+    <meta name="description" content="Manage OpenClaw and your AI assistant">
     <style>
         * {
             margin: 0;
@@ -276,10 +276,132 @@
             background: #dc3545;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .agent-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-left: 5px solid #007bff;
+        }
+
+        .agent-card h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .agent-card .status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .agent-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .control-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .control-btn.danger {
+            background: #dc3545;
+        }
+
+        .control-btn.danger:hover {
+            background: #c82333;
+        }
+
+        .control-btn.warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .control-btn.warning:hover {
+            background: #e0a800;
+        }
+
+        .agent-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #007bff;
+        }
+
+        .config-item .key {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .config-item .value {
+            color: #007bff;
+            font-family: monospace;
+        }
+
+        .config-item .edit-btn {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
         @media (max-width: 768px) {
@@ -327,6 +449,10 @@
             .links-list {
                 grid-template-columns: 1fr;
             }
+
+            .agent-controls {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -344,6 +470,10 @@
                 max-width: 200px;
                 text-align: center;
             }
+
+            .agent-card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -351,11 +481,12 @@
     <div class="container">
         <div class="header">
             <h1>⚡ Jaydon's Dashboard</h1>
-            <p>Quick access to everything you need</p>
+            <p>Manage OpenClaw and your AI assistant</p>
         </div>
         
         <div class="nav">
             <a href="#home" class="active">Home</a>
+            <a href="#agent">Agent</a>
             <a href="#tools">Tools</a>
             <a href="#status">Status</a>
             <a href="#links">Links</a>
@@ -365,133 +496,55 @@
             <div id="home" class="section">
                 <h2>🎉 Welcome Back!</h2>
                 <div class="card">
-                    <p>Your personal command center is ready to help you with your tasks today.</p>
-                    <p>Everything you need, right at your fingertips.</p>
+                    <p>Your personal command center is ready to help you manage everything.</p>
+                    <p>OpenClaw gateway is now running - I can receive messages through the dashboard!</p>
+                </div>
+            </div>
+            
+            <div id="agent" class="section">
+                <h2>🤖 Agent Management</h2>
+                <div class="agent-card">
+                    <h3>Henry - Your AI Assistant</h3>
+                    <div class="status">
+                        <span class="status-indicator online"></span>
+                        <span class="label">Agent Status</span>
+                        <span class="value">Online</span>
+                    </div>
+                    <p>Henry is ready to help you with all your tasks. The OpenClaw gateway is now running, allowing for better communication and management.</p>
+                    
+                    <div class="agent-controls">
+                        <button class="control-btn" onclick="sendMessage('hello')">Send Message</button>
+                        <button class="control-btn warning" onclick="restartAgent()">Restart Agent</button>
+                        <button class="control-btn danger" onclick="shutdownAgent()">Shutdown Agent</button>
+                    </div>
+                    
+                    <div class="agent-stats">
+                        <div class="stat-card">
+                            <div class="number">3</div>
+                            <div class="label">Skills</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number">5</div>
+                            <div class="label">Plugins</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number">2</div>
+                            <div class="label">Sessions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number">Online</div>
+                            <div class="label">Status</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div id="tools" class="section">
-                <h2>🔧 Quick Tools</h2>
+                <h2>🔧 System Tools</h2>
                 <div class="tools-grid">
                     <div class="tool-card">
-                        <h3>🔧 OpenClaw</h3>
-                        <p>Your AI assistant for all tasks</p>
-                        <a href="https://openclaw.ai">Go to OpenClaw</a>
-                    </div>
-                    <div class="tool-card">
-                        <h3>🔒 Tailscale</h3>
-                        <p>Secure network access</p>
-                        <a href="https://tailscale.com">Go to Tailscale</a>
-                    </div>
-                    <div class="tool-card">
-                        <h3>📧 Email</h3>
-                        <p>Check your messages</p>
-                        <a href="https://mail.google.com">Gmail</a>
-                    </div>
-                    <div class="tool-card">
-                        <h3>📅 Calendar</h3>
-                        <p>Stay organized</p>
-                        <a href="https://calendar.google.com">Google Calendar</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="status" class="section">
-                <h2>📊 System Status</h2>
-                <div class="card">
-                    <div class="status">
-                        <span class="status-indicator online"></span>
-                        <span class="label">OpenClaw Agent</span>
-                        <span class="value">Online</span>
-                    </div>
-                    <div class="status">
-                        <span class="status-indicator online"></span>
-                        <span class="label">HTTP Server</span>
-                        <span class="value">Online</span>
-                    </div>
-                    <div class="status">
-                        <span class="status-indicator offline"></span>
-                        <span class="label">Tailscale</span>
-                        <span class="value">Offline</span>
-                    </div>
-                    <div class="status">
-                        <span class="status-indicator online"></span>
-                        <span class="label">GitHub</span>
-                        <span class="value">Online</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="links" class="section">
-                <h2>🔗 Useful Links</h2>
-                <div class="links-list">
-                    <div class="link-item">
-                        <a href="https://docs.openclaw.ai">📚 OpenClaw Docs</a>
-                        <a href="https://github.com/openclaw/openclaw">🐙 GitHub Repo</a>
-                        <a href="https://discord.com/invite/clawd">💬 Discord Community</a>
-                    </div>
-                    <div class="link-item">
-                        <a href="https://github.com/jaydongoulding1/Dashboard">📁 Your Dashboard</a>
-                        <a href="https://jaydongoulding1.github.io/Dashboard">🌐 Live Site</a>
-                        <a href="https://github.com/settings/profile">🔪 GitHub Settings</a>
-                    </div>
-                    <div class="link-item">
-                        <a href="https://tailscale.com">🔒 Tailscale</a>
-                        <a href="https://mail.google.com">📧 Email</a>
-                        <a href="https://calendar.google.com">📅 Calendar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>© 2026 Jaydon's Dashboard | Built with ❤️ using OpenClaw</p>
-        </div>
-    </div>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('.nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    
-                    // Update active state
-                    document.querySelectorAll('.nav a').forEach(link => {
-                        link.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                }
-            });
-        });
-
-        // Add some interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate status indicators
-            const indicators = document.querySelectorAll('.status-indicator');
-            indicators.forEach(indicator => {
-                if (indicator.classList.contains('online')) {
-                    indicator.style.animation = 'pulse 2s infinite';
-                }
-            });
-
-            // Add hover effects to cards
-            const cards = document.querySelectorAll('.card, .tool-card, .link-item');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-3px)';
-                });
-
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+                        <h3>🔄 Gateway</h3>
+                        <p>WebSocket Gateway Status</p>
+                        <div class="status">
+                            <span class="status-indicator online"></span>
+                            <span class="label">Gateway</
